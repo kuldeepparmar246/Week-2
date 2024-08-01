@@ -1,0 +1,128 @@
+The provided C code implements Dijkstra's Algorithm to find the shortest path from a given starting node to all
+other nodes in a graph represented by an adjacency matrix.
+
+Code Structure
+1. Header Files and Macros
+
+#include<stdio.h>
+#include<conio.h>
+
+#define INFINITY 9999
+#define MAX 10
+
+INFINITY: A large constant representing no direct connection between nodes.
+MAX: The maximum number of vertices (10) in the graph.
+
+2. Function Prototypes
+
+void dijkstra(int G[MAX][MAX], int n, int startnode);
+
+dijkstra Function: Calculates the shortest path using Dijkstra's algorithm.
+
+int main()
+{
+    int G[MAX][MAX], i, j, n, u;
+
+    printf("Enter no. of vertices: ");
+    scanf("%d", &n);
+
+    printf("\nEnter the adjacency matrix:\n");
+    for(i = 0; i < n; i++)
+        for(j = 0; j < n; j++)
+            scanf("%d", &G[i][j]);
+
+    printf("\nEnter the starting node: ");
+    scanf("%d", &u);
+
+    dijkstra(G, n, u);
+
+    return 0;
+}
+
+Graph Input: Reads the number of vertices n and the adjacency matrix G.
+Starting Node Input: Reads the starting node u.
+Dijkstra Function Call: Executes Dijkstra’s algorithm with the provided inputs.
+
+4. Dijkstra's Algorithm Function
+
+void dijkstra(int G[MAX][MAX], int n, int startnode)
+{
+    int cost[MAX][MAX], distance[MAX], pred[MAX];
+    int visited[MAX], count, mindistance, nextnode, i, j;
+
+    // Create cost matrix
+    for(i = 0; i < n; i++)
+        for(j = 0; j < n; j++)
+            if(G[i][j] == 0)
+                cost[i][j] = INFINITY;
+            else
+                cost[i][j] = G[i][j];
+
+    // Initialize arrays
+    for(i = 0; i < n; i++)
+    {
+        distance[i] = cost[startnode][i];
+        pred[i] = startnode;
+        visited[i] = 0;
+    }
+
+    distance[startnode] = 0;
+    visited[startnode] = 1;
+    count = 1;
+
+    while(count < n - 1)
+    {
+        mindistance = INFINITY;
+
+        // Find the next node with the minimum distance
+        for(i = 0; i < n; i++)
+            if(distance[i] < mindistance && !visited[i])
+            {
+                mindistance = distance[i];
+                nextnode = i;
+            }
+
+        // Update distance array
+        visited[nextnode] = 1;
+        for(i = 0; i < n; i++)
+            if(!visited[i])
+                if(mindistance + cost[nextnode][i] < distance[i])
+                {
+                    distance[i] = mindistance + cost[nextnode][i];
+                    pred[i] = nextnode;
+                }
+        count++;
+    }
+
+    // Print shortest path and distance
+    for(i = 0; i < n; i++)
+        if(i != startnode)
+        {
+            printf("\nDistance of node %d = %d", i, distance[i]);
+            printf("\nPath = %d", i);
+
+            j = i;
+            do
+            {
+                j = pred[j];
+                printf(" <- %d", j);
+            } while(j != startnode);
+        }
+}
+
+Key Components
+
+Cost Matrix: Created from the adjacency matrix, replacing 0s with INFINITY to signify no direct path.
+
+Distance Array: Stores the shortest distance from the start node to each node.
+
+Predecessor Array (pred): Stores the preceding node in the shortest path for each node.
+
+Visited Array: Tracks nodes that have been processed.
+
+Algorithm Loop:
+
+Finds the unvisited node with the smallest known distance (mindistance).
+Updates the distance and predecessor for neighboring nodes if a shorter path is found through the current node.
+Marks the node as visited.
+Output: Displays the shortest distance and path from the starting node to all other nodes.
